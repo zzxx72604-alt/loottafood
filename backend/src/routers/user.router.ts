@@ -78,6 +78,26 @@ router.get('/makeAdmin/:email', asyncHandler(
   }
 ))
 
+// DEV HELPER: delete a user by email (open in browser). Remove before production.
+router.get('/delete/:email', asyncHandler(
+  async (req, res) => {
+    const result = await UserModel.deleteOne({ email: req.params.email.toLowerCase() });
+    if (result.deletedCount === 0) {
+      res.status(HTTP_BAD_REQUEST).send('User not found! Check the email.');
+      return;
+    }
+    res.send(`Deleted user: ${req.params.email.toLowerCase()}`);
+  }
+))
+
+// DEV HELPER: list all users (open in browser). Shows name/email/admin, no passwords.
+router.get('/list', asyncHandler(
+  async (req, res) => {
+    const users = await UserModel.find({}, 'name email isAdmin');
+    res.send(users);
+  }
+))
+
 router.put('/updateProfile', authMid, asyncHandler(
   async (req: any, res) => {
     const { name, email } = req.body;
