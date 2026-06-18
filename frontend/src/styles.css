@@ -167,6 +167,20 @@ body.dark-theme app-confirm-dialog .cancel{
 /* Orders action row divider (dark mode) */
 body.dark-theme app-orders-page .actions{ border-top-color: #2a2e37; }
 
+/* Manage Orders (dark mode) */
+body.dark-theme app-manage-orders .order-card{
+  background: #1d2027;
+  border-color: #2a2e37;
+  color: #e8e8ea;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+}
+body.dark-theme app-manage-orders .who strong{ color: #e8e8ea; }
+body.dark-theme app-manage-orders .who .addr{ color: #9a9aa2; }
+body.dark-theme app-manage-orders .count{ color: #b9b9c0; }
+body.dark-theme app-manage-orders .date{ color: #9a9aa2; }
+body.dark-theme app-manage-orders .msg{ color: #9a9aa2; }
+body.dark-theme app-manage-orders .thumbs img{ border: 1px solid #2a2e37; }
+
 /* ===== Tag / origin pill readability in dark mode (force over component styles) ===== */
 body.dark-theme app-home .origins span,
 body.dark-theme app-favorites-page .origins span,
