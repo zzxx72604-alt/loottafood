@@ -276,6 +276,12 @@ body.dark-theme app-admin-dashboard .controls select option{
   color: #ffffff;
 }
 
+/* Loading overlay (dark mode) — no white flash */
+body.dark-theme app-loading .container{
+  background-color: rgba(18, 19, 24, 0.6) !important;
+}
+body.dark-theme app-loading h1{ color: #ff8a8a; }
+
 /* ============================================================
    MOBILE RESPONSIVE (phones) — !important to beat component CSS
    ============================================================ */
