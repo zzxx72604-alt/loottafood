@@ -38,6 +38,7 @@ export interface Order{
     paymentId: string;
     status: OrderStatus;
     user: Types.ObjectId;
+    archived: boolean;
     createdAt: Date;
     updatedAt: Date
   }
@@ -50,6 +51,7 @@ export interface Order{
       totalPrice: {type: Number, required: true},
       items: {type: [OrderItemSchema], required: true},
       status: {type: String, default: OrderStatus.NEW},
+      archived: {type: Boolean, default: false},
       user: {type: Schema.Types.ObjectId, required: true}
   },{
       timestamps: true,

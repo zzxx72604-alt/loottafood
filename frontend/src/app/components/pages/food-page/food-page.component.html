@@ -11,10 +11,13 @@
       <span class="name">
         {{food.name}}
       </span>
-      <span class="favorite {{food.favorite? '': 'not'}}">❤</span>
+      <span class="favorite {{food.favorite? '': 'not'}}"
+        (click)="toggleFavorite()"
+        [title]="food.favorite ? 'Remove from favorites' : 'Add to favorites'">❤</span>
     </div>
     <div class="rating">
-      <star-rating [stars]="food.stars" [size]="1.8" />
+      <star-rating [stars]="food.stars" [size]="1.8" [editable]="true" (rate)="onRate($event)" />
+      <span class="rate-hint">{{ userRating ? 'Your rating: ' + userRating + '★ — tap to change' : 'Tap a star to rate' }}</span>
     </div>
 
     <div class="origins">
@@ -36,12 +39,26 @@
     </div>
 
     <div class="price">
+      <span class="old-price" *ngIf="food.discount">{{food.price | currency}}</span>
       <span>
-        {{food.price | currency}}
+        {{ (food.discount ? food.price * (1 - food.discount/100) : food.price) | currency }}
       </span>
+      <span class="disc-badge" *ngIf="food.discount">-{{food.discount}}% OFF</span>
     </div>
 
     <button (click)="addToCart()">Add To Cart</button>
 
+  </div>
+</div>
+
+<div *ngIf="related.length" class="related">
+  <h3 class="related-title">You may also like</h3>
+  <div class="related-list">
+    <a *ngFor="let r of related" class="related-card" routerLink="/food/{{r.id}}">
+      <span class="r-badge" *ngIf="r.discount">-{{r.discount}}%</span>
+      <img [src]="r.imageUrl" [alt]="r.name" />
+      <div class="r-name">{{ r.name }}</div>
+      <div class="r-price">{{ salePrice(r) | currency }}</div>
+    </a>
   </div>
 </div>

@@ -42,9 +42,26 @@ img{
 .favorite{
   color: #e72929;
   font-size: 2.5rem;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.favorite:hover{
+  transform: scale(1.15);
 }
 
 .favorite.not{
+  color: grey;
+}
+
+.rating{
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.rate-hint{
+  font-size: 0.9rem;
   color: grey;
 }
 
@@ -110,4 +127,69 @@ button{
 button:hover{
   opacity: 0.9;
   cursor: pointer;
+}
+
+.old-price{
+  text-decoration: line-through;
+  color: #aaa;
+  font-size: 1.2rem;
+  margin-right: 0.6rem;
+}
+.disc-badge{
+  background: #e72929;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 0.2rem 0.7rem;
+  border-radius: 10rem;
+  margin-left: 0.6rem;
+  vertical-align: middle;
+}
+
+/* You may also like */
+.related{
+  max-width: 70rem;
+  margin: 0 auto 5rem;
+  padding: 0 2rem;
+}
+.related-title{
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+}
+.related-list{
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+}
+.related-card{
+  position: relative;
+  flex: 0 0 11rem;
+  width: 11rem;
+  border: 1px solid #eee;
+  border-radius: 0.9rem;
+  overflow: hidden;
+  background: #fff;
+  color: #333;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.related-card:hover{
+  transform: translateY(-4px);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.14);
+}
+.related-card img{
+  width: 100%;
+  height: 8rem;
+  object-fit: cover;
+  margin: 0;
+  border-radius: 0;
+}
+.r-name{ padding: 0.5rem 0.6rem 0; font-weight: 600; font-size: 0.9rem; }
+.r-price{ padding: 0.1rem 0.6rem 0.6rem; color: #e72929; font-weight: 700; }
+.r-badge{
+  position: absolute;
+  top: 0.5rem; left: 0.5rem; z-index: 2;
+  background: #e72929; color: #fff;
+  font-size: 0.72rem; font-weight: 700;
+  padding: 0.1rem 0.45rem; border-radius: 10rem;
 }

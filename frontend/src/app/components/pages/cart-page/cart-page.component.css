@@ -121,3 +121,9 @@ li .remove-button:hover{
   opacity: 1;
   cursor: pointer;
 }
+
+/* order item name link */
+li div a{
+  color: #e72929;
+  font-weight: 600;
+}

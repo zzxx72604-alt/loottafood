@@ -5,9 +5,13 @@
     "node": ">=18 <19"
   },
   "scripts": {
-    "dev": "cd frontend && npm start & cd backend && npm start",
+    "dev": "concurrently -k -n WEB,API -c cyan,green \"cd frontend && npm start -- --host 0.0.0.0 --disable-host-check\" \"cd backend && npm start\"",
     "start": "cd backend/built && node server.js",
     "prebuild": "cd backend && npm run build",
-    "build": "cd frontend && npm run build"
+    "build": "cd frontend && npm run build",
+    "postinstall": "cd frontend && npm install --force && cd ../backend && npm install"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
   }
 }

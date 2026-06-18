@@ -5,14 +5,25 @@ div {
 }
 
 div a {
-  background-color: #f0f0f0;
-  padding: 0.3rem 1rem;
+  background: rgba(255, 255, 255, 0.5);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
+  backdrop-filter: blur(12px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  padding: 0.35rem 1.1rem;
   margin: 0.2rem 0.15rem;
   border-radius: 10rem;
   font-weight: 600;
-  color: blue;
+  color: #2a2a2a;
+  transition: transform 0.12s ease, background 0.15s ease;
 }
 
-a .active {
-  background-color: red;
+div a:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.7);
+}
+
+div a.active {
+  background: #e72929;
+  color: #ffffff;
+  border-color: #e72929;
 }

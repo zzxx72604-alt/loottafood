@@ -4,6 +4,7 @@ import { HTTP_BAD_REQUEST } from '../constants/http_status';
 import { OrderStatus } from '../constants/order_status';
 import { OrderModel } from '../models/order.model';
 import auth from '../middlewares/auth.mid';
+import admin from '../middlewares/admin.mid';
 
 const router = Router();
 router.use(auth);
@@ -53,6 +54,55 @@ router.post('/pay', asyncHandler( async (req:any, res) => {
 router.get('/track/:id', asyncHandler( async (req, res) => {
     const order = await OrderModel.findById(req.params.id);
     res.send(order);
+}))
+
+router.get('/', asyncHandler( async (req:any, res) => {
+    const orders = await OrderModel.find({ user: req.user.id, archived: { $ne: true } })
+        .sort({ createdAt: -1 });
+    res.send(orders);
+}))
+
+// Soft delete: hide the order but keep it so it can be restored.
+router.delete('/:id', asyncHandler( async (req:any, res) => {
+    const order = await OrderModel.findOne({ _id: req.params.id, user: req.user.id });
+    if(!order){
+        res.status(HTTP_BAD_REQUEST).send('Order not found!');
+        return;
+    }
+    order.archived = true;
+    await order.save();
+    res.send('Order deleted successfully!');
+}))
+
+// Restore a soft-deleted order (undo).
+router.put('/restore/:id', asyncHandler( async (req:any, res) => {
+    const order = await OrderModel.findOne({ _id: req.params.id, user: req.user.id });
+    if(!order){
+        res.status(HTTP_BAD_REQUEST).send('Order not found!');
+        return;
+    }
+    order.archived = false;
+    await order.save();
+    res.send('Order restored successfully!');
+}))
+
+// Admin: list every (non-archived) order
+router.get('/all', admin, asyncHandler( async (req:any, res) => {
+    const orders = await OrderModel.find({ archived: { $ne: true } })
+        .sort({ createdAt: -1 });
+    res.send(orders);
+}))
+
+// Admin: mark an order as delivered / completed
+router.put('/complete/:id', admin, asyncHandler( async (req:any, res) => {
+    const order = await OrderModel.findById(req.params.id);
+    if(!order){
+        res.status(HTTP_BAD_REQUEST).send('Order not found!');
+        return;
+    }
+    order.status = OrderStatus.DELIVERED;
+    await order.save();
+    res.send('Order marked as delivered!');
 }))
 
 export default router;

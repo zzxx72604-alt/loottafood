@@ -1,6 +1,6 @@
 import { environment } from "src/environments/environment";
 
-const BASE_URL = environment.production? '' : 'http://localhost:5000';
+const BASE_URL = '';   // same-origin; dev server proxies /api to the backend (see proxy.conf.json)
 
 export const FOODS_URL = BASE_URL + '/api/foods';
 export const FOODS_TAGS_URL = FOODS_URL + '/tags';
@@ -11,6 +11,8 @@ export const FOOD_BY_ID_URL = FOODS_URL + '/';
 
 export const USER_LOGIN_URL = BASE_URL + '/api/users/login';
 export const USER_REGISTER_URL = BASE_URL + '/api/users/register';
+export const USER_UPDATE_PROFILE_URL = BASE_URL + '/api/users/updateProfile';
+export const USER_CHANGE_PASSWORD_URL = BASE_URL + '/api/users/changePassword';
 
 
 export const ORDERS_URL = BASE_URL + '/api/orders';

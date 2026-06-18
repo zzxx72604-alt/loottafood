@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
-import { USER_LOGIN_URL, USER_REGISTER_URL } from '../shared/constants/urls';
+import { USER_CHANGE_PASSWORD_URL, USER_LOGIN_URL, USER_REGISTER_URL, USER_UPDATE_PROFILE_URL } from '../shared/constants/urls';
 import { IUserLogin } from '../shared/interfaces/IUserLogin';
 import { IUserRegister } from '../shared/interfaces/IUserRegister';
 import { User } from '../shared/models/User';
@@ -60,6 +60,35 @@ export class UserService {
     )
   }
 
+
+  updateProfile(name:string, email:string):Observable<User>{
+    return this.http.put<User>(USER_UPDATE_PROFILE_URL, {name, email}).pipe(
+      tap({
+        next: (user) => {
+          this.setUserToLocalStorage(user);
+          this.userSubject.next(user);
+          this.toastrService.success('Profile updated successfully!', 'Success');
+        },
+        error: (errorResponse) => {
+          this.toastrService.error(errorResponse.error, 'Update Failed');
+        }
+      })
+    );
+  }
+
+  changePassword(currentPassword:string, newPassword:string):Observable<string>{
+    return this.http.put(USER_CHANGE_PASSWORD_URL,
+      {currentPassword, newPassword}, {responseType:'text'}).pipe(
+      tap({
+        next: () => {
+          this.toastrService.success('Password changed successfully!', 'Success');
+        },
+        error: (errorResponse) => {
+          this.toastrService.error(errorResponse.error, 'Change Password Failed');
+        }
+      })
+    );
+  }
 
   logout(){
     this.userSubject.next(new User());

@@ -10,6 +10,8 @@ export interface Food{
     imageUrl: string;
     origins: string[];
     cookTime:string;
+    discount:number;
+    sortOrder:number;
 }
 
 export const FoodSchema = new Schema<Food>(
@@ -21,7 +23,9 @@ export const FoodSchema = new Schema<Food>(
         stars: {type: Number, required:true},
         imageUrl: {type: String, required:true},
         origins: {type: [String], required:true},
-        cookTime: {type: String, required:true}
+        cookTime: {type: String, required:true},
+        discount: {type: Number, default: 0},
+        sortOrder: {type: Number, default: 0}
     },{
         toJSON:{
             virtuals: true

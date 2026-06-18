@@ -5,6 +5,7 @@ import asyncHandler from 'express-async-handler';
 import { User, UserModel } from '../models/user.model';
 import { HTTP_BAD_REQUEST } from '../constants/http_status';
 import bcrypt from 'bcryptjs';
+import authMid from '../middlewares/auth.mid';
 const router = Router();
 
 router.get("/seed", asyncHandler(
@@ -58,6 +59,66 @@ router.post('/register', asyncHandler(
 
     const dbUser = await UserModel.create(newUser);
     res.send(generateTokenReponse(dbUser));
+  }
+))
+
+// DEV HELPER: promote a user to admin by email. Remove before production.
+router.get('/makeAdmin/:email', asyncHandler(
+  async (req, res) => {
+    const user = await UserModel.findOneAndUpdate(
+      { email: req.params.email.toLowerCase() },
+      { isAdmin: true },
+      { new: true }
+    );
+    if (!user) {
+      res.status(HTTP_BAD_REQUEST).send('User not found! Check the email.');
+      return;
+    }
+    res.send(`${user.email} is now an admin. Please log out and log back in to refresh your access.`);
+  }
+))
+
+router.put('/updateProfile', authMid, asyncHandler(
+  async (req: any, res) => {
+    const { name, email } = req.body;
+
+    const taken = await UserModel.findOne({
+      email: email.toLowerCase(),
+      _id: { $ne: req.user.id },
+    });
+    if (taken) {
+      res.status(HTTP_BAD_REQUEST).send('Email is already in use by another account!');
+      return;
+    }
+
+    const user = await UserModel.findByIdAndUpdate(
+      req.user.id,
+      { name, email: email.toLowerCase() },
+      { new: true }
+    );
+    res.send(generateTokenReponse(user!));
+  }
+))
+
+router.put('/changePassword', authMid, asyncHandler(
+  async (req: any, res) => {
+    const { currentPassword, newPassword } = req.body;
+
+    const user = await UserModel.findById(req.user.id);
+    if (!user) {
+      res.status(HTTP_BAD_REQUEST).send('Change Password Failed!');
+      return;
+    }
+
+    const equal = await bcrypt.compare(currentPassword, user.password);
+    if (!equal) {
+      res.status(HTTP_BAD_REQUEST).send('Current password is not correct!');
+      return;
+    }
+
+    user.password = await bcrypt.hash(newPassword, 10);
+    await user.save();
+    res.send('Password changed successfully!');
   }
 ))
 

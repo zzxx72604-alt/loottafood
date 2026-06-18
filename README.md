@@ -230,3 +230,142 @@
     6.  Run ncu -u in the backend folder
     7.  Run npm install
     8.  Run npm start
+
+
+# ===== Custom Extensions (LoottaFood) =====
+# The lessons below are customizations made on top of the base course project.
+
+23. Rebrand to LoottaFood
+    1.  Change header logo text to "LoottaFood"
+    2.  Change browser tab title in index.html
+    3.  Update search box placeholder
+
+24. Add Drinks to the Menu
+    1.  Add 6 drinks to data.ts (frontend + backend)
+        1.  Caramel Frappuccino, Iced Matcha Latte, Strawberry Milk,
+            Hibiscus Iced Tea, Ube Taro Milk, Ube Coconut Latte
+    2.  Add images to assets (food-7 .. food-12.jpg)
+    3.  Add new tags: Drinks, Cold, Coffee, Tea
+    4.  Make the seed route reload data with ?force=true
+
+25. Dark Mode
+    1.  Create Theme service (toggle + remember in localStorage)
+    2.  Add 🌙 / ☀️ toggle button in the header
+    3.  Add body.dark-theme styles in styles.css
+
+26. Favorites
+    1.  Create Prefs service (favorites in localStorage)
+    2.  Make the heart clickable on cards & food page
+    3.  Create Favorites page + route + header link
+
+27. Interactive Ratings
+    1.  Make the star-rating component editable (hover + click)
+    2.  Save the user's rating in localStorage (Prefs service)
+    3.  Blend the user's rating into the displayed stars
+
+28. Cambodian Payment Methods (replace PayPal)
+    1.  Create payment-options component
+    2.  Methods: ABA, KHQR, Wing, WeChat, Alipay, ACLEDA
+    3.  Show a QR / confirm screen, then mark order paid (existing /pay api)
+
+29. Sticky Glass Header & Auto-hide Search
+    1.  Make the header sticky (always visible)
+    2.  Make the search a sticky bar that hides on scroll-down, shows on scroll-up
+    3.  iOS-style frosted glass (backdrop-filter blur)
+
+30. Profile Page (edit name / email / password)
+    1.  Add updateProfile + changePassword apis (auth protected)
+    2.  Add service methods + urls
+    3.  Create Profile page component + route (AuthGuard)
+
+31. Orders History
+    1.  Add list all orders api (current user)
+    2.  Create Orders page + route + header link
+    3.  Re-order (add items back to cart)
+    4.  Soft-delete + Undo (archived flag + /restore api)
+
+32. Confirm Dialog
+    1.  Create Confirm service (promise-based)
+    2.  Create confirm-dialog component (added to app root)
+    3.  Use it for delete order, delete item, and logout
+
+33. Admin Dashboard (menu CRUD)
+    1.  Add admin middleware + create/update/delete food apis
+    2.  Create Admin guard
+    3.  Add FoodService create/update/delete methods
+    4.  Create admin-dashboard component + route (AdminGuard)
+    5.  Image field with live preview + upload (data URL)
+    6.  Dev helper api: /api/users/makeAdmin/:email
+
+34. Discounts & Sorting / Filter
+    1.  Add discount + sortOrder fields to food model
+    2.  Admin: discount input, price sort, "discounted only" filter
+    3.  Customer: sale price + struck original + discount badge
+    4.  Customer home: sort (price/rating) + "On sale only"
+
+35. Drag-and-drop Reorder
+    1.  Install @angular/cdk
+    2.  Add DragDropModule + drag handle on admin rows
+    3.  Add /reorder api; order reflects on the customer menu
+
+36. iOS-style Glass UI & Gradient Background
+    1.  Brand-tinted gradient background (light + dark)
+    2.  Frosted-glass tags + custom glass-select dropdown
+    3.  White font on glass in dark mode
+
+37. "You may also like"
+    1.  Food page loads all foods, shuffles, shows 4 random items
+    2.  Clicking one opens it and reshuffles
+
+38. Card Hover/Hold Description Overlay
+    1.  Dark overlay fades in over the card (no layout push / no lag)
+    2.  Price turns white while overlay shows
+    3.  Price moved to normal flow so origin tags never overlap it
+
+39. Mobile / Tablet Responsive + ScanMe
+    1.  Media queries: header wraps, 2-up cards on phones
+    2.  Desktop = tablet card sizing
+    3.  Header "📷 ScanMe" popup shows assets/scan-qr.jpg (or .png)
+
+40. Run / Host / Test Guide
+    1.  See RUN-GUIDE.md in the project root
+    2.  Local run, seeding, admin account
+    3.  Wi-Fi/LAN testing on phones (scan-to-order)
+    4.  Production build & deploy notes
+
+41. Admin Deliveries + Cart Polish
+    1.  Add DELIVERED status to OrderStatus enum
+    2.  Admin order apis (auth + admin)
+        1.  GET /api/orders/all  (all orders)
+        2.  PUT /api/orders/complete/:id  (mark delivered)
+    3.  Add getAllOrders + completeOrder to order service
+    4.  Create manage-orders component + route (AdminGuard)
+        1.  Lists every order with customer, address, items, total, status
+        2.  "Mark Delivered" button (for staff / delivery)
+    5.  Link from Admin Dashboard ("Manage Orders")
+    6.  Fix cart item name color in dark mode
+
+42. Order Notifications (bell)
+    1.  Create Notification service (polls every ~20s)
+        1.  Add 'skip-loading' header so polls don't flash the spinner
+    2.  Admin: badge = paid orders waiting (request from customer)
+    3.  Customer: badge = orders that became delivered/completed
+    4.  Add 🔔 bell + dropdown to the header (seen-state per browser)
+    5.  RUN-GUIDE: notifications + how to delete user/customer data
+
+43. One-command Run + Wi-Fi Testing
+    1.  Root package.json: add "concurrently" dev dependency
+    2.  Update "dev" script to run backend + frontend together
+        1.  Frontend served on 0.0.0.0 (reachable by phones)
+    3.  Run with: npm install (root) then npm run dev
+    4.  Note: Express backend already binds all interfaces (no flag needed)
+    5.  Root postinstall: auto-installs frontend + backend on root npm install
+    6.  Logo click scrolls to top (and routes home)
+
+44. Single-port Proxy + ngrok (hide IP)
+    1.  Add proxy.conf.json (frontend /api -> backend :5000)
+    2.  Set frontend BASE_URL to '' (relative, same-origin via proxy)
+    3.  angular.json serve: proxyConfig; dev script: --disable-host-check
+    4.  Result: no CORS / no IP edits — works on localhost, LAN, and ngrok
+    5.  Hide IP: run "ngrok http 4200", point the QR at the ngrok URL
+    6.  RUN-GUIDE section 6 updated (LAN + ngrok + table QR)
