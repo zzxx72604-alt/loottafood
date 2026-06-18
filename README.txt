@@ -66,9 +66,53 @@ Go to:   http://localhost:5000/api/users/delete/THEIR@email.com
 - Shows: Deleted user: their@email.com
 
 ----------------------------------------
+mongodb
+----------------------------------------
+mongodb://localhost:27017/foodmine
+
+----------------------------------------
+VIEW THE DATABASE (mongosh) - Windows or Linux
+----------------------------------------
+Works in any terminal (Git Bash, PowerShell, CMD, Linux terminal).
+
+1. Type:   mongosh
+2. Then:   use foodmine
+3. Then:   show collections
+4. See data:
+      db.users.find({}, { name: 1, email: 1, isAdmin: 1 })
+      db.foods.find()
+      db.orders.find()
+5. Type:   exit   to leave
+
+If "mongosh" is not found:
+- Windows: install "MongoDB Shell" from mongodb.com/try/download/shell
+- Linux:   sudo apt-get install -y mongodb-mongosh
+
+----------------------------------------
 NOTES
 ----------------------------------------
 - A new computer starts EMPTY. You must do steps 5 and 6 once.
 - After the first time, just do steps 3 and 7.
 - Each computer has its own data (not shared).
 - To stop the servers: press Ctrl + C in the terminal, or close VS Code.
+
+----------------------------------------
+OPTIONAL - STOP / KILL THE SERVERS
+----------------------------------------
+Normal way: press Ctrl + C in the terminal, or close VS Code.
+
+If a port stays stuck ("port already in use"), free both ports.
+Easiest (works on Windows, Mac, Linux):
+      npx kill-port 4200 5000
+
+Windows:
+      taskkill /F /IM node.exe
+      (or Task Manager -> find Node.js -> End task)
+
+Linux:
+      pkill -f node
+      (or System Monitor -> find node -> Kill)
+
+Mac:
+      pkill -f node
+      (or Activity Monitor -> search node -> Stop)
