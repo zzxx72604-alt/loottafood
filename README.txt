@@ -81,6 +81,12 @@ MAKE A USER ADMIN (then they log out + log in):
 
 Type:   exit   to leave mongosh.
 
+NOTE: passwords are stored ENCRYPTED (bcrypt, one-way) - you cannot read
+the original password. If someone forgets it, RESET it (set a new one):
+      Browser:  http://localhost:5000/api/users/setPassword/EMAIL/NEWPASSWORD
+      Example:  http://localhost:5000/api/users/setPassword/john@gmail.com/newpass123
+      (or use Profile -> Change Password while logged in)
+
 If "mongosh" is not found:
 - Windows: install "MongoDB Shell" from mongodb.com/try/download/shell
            (then run mongosh in Git Bash / PowerShell / CMD)

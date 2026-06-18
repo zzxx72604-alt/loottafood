@@ -102,6 +102,25 @@ router.get('/delete/:email', asyncHandler(
   }
 ))
 
+// DEV HELPER: reset a user's password by email (it gets bcrypt-hashed).
+// Open in browser:  /api/users/setPassword/EMAIL/NEWPASSWORD
+// Remove before production.
+router.get('/setPassword/:email/:newPassword', asyncHandler(
+  async (req, res) => {
+    const hashed = await bcrypt.hash(req.params.newPassword, 10);
+    const user = await UserModel.findOneAndUpdate(
+      { email: req.params.email.toLowerCase() },
+      { password: hashed },
+      { new: true }
+    );
+    if (!user) {
+      res.status(HTTP_BAD_REQUEST).send('User not found! Check the email.');
+      return;
+    }
+    res.send(`Password reset for ${user.email}. You can now log in with the new password.`);
+  }
+))
+
 // DEV HELPER: list all users (open in browser). Shows name/email/admin, no passwords.
 router.get('/list', asyncHandler(
   async (req, res) => {
