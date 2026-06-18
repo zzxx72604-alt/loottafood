@@ -11,12 +11,24 @@ const router = Router();
 router.get("/seed", asyncHandler(
   async (req, res) => {
      const usersCount = await UserModel.countDocuments();
-     if(usersCount> 0){
-       res.send("Seed is already done!");
+     if(usersCount > 0 && req.query.force !== 'true'){
+       res.send("Seed is already done! Add ?force=true to reset the sample users.");
        return;
      }
- 
-     await UserModel.create(sample_users);
+
+     // remove old sample users and recreate them with HASHED passwords,
+     // so login (bcrypt.compare) works for the seeded accounts.
+     await UserModel.deleteMany({ email: { $in: sample_users.map((u:any) => u.email.toLowerCase()) } });
+
+     const hashedUsers = await Promise.all(
+       sample_users.map(async (u:any) => ({
+         ...u,
+         email: u.email.toLowerCase(),
+         password: await bcrypt.hash(u.password, 10),
+       }))
+     );
+
+     await UserModel.create(hashedUsers);
      res.send("Seed Is Done!");
  }
  ))

@@ -52,41 +52,47 @@ C. Log out, then log in again.
 
 D. Click your name (top right) -> Dashboard.
 
-----------------------------------------
-SEE ALL USERS (open in browser)
-----------------------------------------
-Go to:   http://localhost:5000/api/users/list
-- Shows every user's name, email, and admin (no passwords)
+========================================
+MANAGE USERS / DATABASE (use the TERMINAL - works on Windows AND Linux)
+========================================
+The database string:   mongodb://localhost:27017/foodmine
 
-----------------------------------------
-DELETE A USER (open in browser)
-----------------------------------------
-Go to:   http://localhost:5000/api/users/delete/THEIR@email.com
-(use the email you want to remove)
-- Shows: Deleted user: their@email.com
-
-----------------------------------------
-mongodb
-----------------------------------------
-mongodb://localhost:27017/foodmine
-
-----------------------------------------
-VIEW THE DATABASE (mongosh) - Windows or Linux
-----------------------------------------
-Works in any terminal (Git Bash, PowerShell, CMD, Linux terminal).
+Open a terminal (Windows: Git Bash, PowerShell, or CMD / Linux: Terminal):
 
 1. Type:   mongosh
 2. Then:   use foodmine
 3. Then:   show collections
-4. See data:
+
+SEE ALL USERS:
       db.users.find({}, { name: 1, email: 1, isAdmin: 1 })
+
+SEE FOODS / ORDERS:
       db.foods.find()
       db.orders.find()
-5. Type:   exit   to leave
+
+DELETE ONE USER (by email):
+      db.users.deleteOne({ email: "their@email.com" })
+
+DELETE MANY USERS:
+      db.users.deleteMany({ email: { $in: ["a@gmail.com", "b@gmail.com"] } })
+
+MAKE A USER ADMIN (then they log out + log in):
+      db.users.updateOne({ email: "me@gmail.com" }, { $set: { isAdmin: true } })
+
+Type:   exit   to leave mongosh.
 
 If "mongosh" is not found:
 - Windows: install "MongoDB Shell" from mongodb.com/try/download/shell
+           (then run mongosh in Git Bash / PowerShell / CMD)
 - Linux:   sudo apt-get install -y mongodb-mongosh
+
+----------------------------------------
+(OPTIONAL) browser shortcuts - may not always work
+----------------------------------------
+See users:    http://localhost:5000/api/users/list
+Delete user:  http://localhost:5000/api/users/delete/THEIR@email.com
+Make admin:   http://localhost:5000/api/users/makeAdmin/THEIR@email.com
+If a browser link errors, use the mongosh terminal commands above instead.
 
 ----------------------------------------
 NOTES
