@@ -53,6 +53,12 @@ C. Log out, then log in again.
 D. Click your name (top right) -> Dashboard.
 
 ----------------------------------------
+SEE ALL USERS (open in browser)
+----------------------------------------
+Go to:   http://localhost:5000/api/users/list
+- Shows every user's name, email, and admin (no passwords)
+
+----------------------------------------
 DELETE A USER (open in browser)
 ----------------------------------------
 Go to:   http://localhost:5000/api/users/delete/THEIR@email.com
