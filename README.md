@@ -1,111 +1,252 @@
-LOOTTAFOOD — HOW TO RUN (SIMPLE STEPS)
-=======================================
+# LoottaFood — Run, Host & Test Guide
 
->>> FOR THE PROFESSOR / TEAMMATE <<<
-TEST THE WEBSITE AT:  http://localhost:4200
-(First do the steps below: install, run, seed once.
- Admin login: john@gmail.com / 12345)
+A food‑ordering web app (**Angular** frontend + **Node/Express + TypeScript** + **MongoDB** backend).
+Customers browse a menu, favorite items, rate them, and order; admins manage the
+menu and orders from a dashboard.
 
-NEED FIRST (one time on a new computer):
-- Node.js 18+
-- MongoDB installed AND running
-  (Windows: install MongoDB Community Server - runs as a service)
-  (Linux:   install mongodb, then: sudo systemctl start mongod)
+---
 
-----------------------------------------
-1) RUN THE APP
-----------------------------------------
-1. Open a terminal in the project folder:  loottafood
-2. Type:   npm install
-3. Type:   npm run dev
-4. Wait until you see:   connect successfully
+## 1. Prerequisites
 
-----------------------------------------
-2) LOAD THE DATA (only the first time on a machine)
-----------------------------------------
-Open these in your browser once:
-5. http://localhost:5000/api/users/seed     (should say: Seed Is Done!)
-6. http://localhost:5000/api/foods/seed      (should say: Seed Is Done!)
+- **Node.js** 18+ and **npm**
+- **MongoDB** running (local `mongodb://localhost:27017`, or a MongoDB Atlas URL)
+- A modern browser (Chrome / Edge / Safari / Firefox)
 
-----------------------------------------
-3) USE THE WEBSITE
-----------------------------------------
-7. Open browser:   http://localhost:4200
+---
 
-----------------------------------------
-4) LOGIN AS ADMIN
-----------------------------------------
-Email:     john@gmail.com
-Password:  12345
-Then click your name (top right) -> Dashboard  (the admin page)
+## 2. One‑time setup (install packages)
 
-----------------------------------------
-MAKE YOUR OWN ACCOUNT AN ADMIN
-----------------------------------------
-A. Register a new account in the website (example: me@gmail.com)
-B. Open browser:   http://localhost:5000/api/users/makeAdmin/me@gmail.com
-C. Log out, then log in again.
-D. Click your name (top right) -> Dashboard.
+From the **project root** (`loottafood`), a single install sets up everything
+(root, frontend, and backend — handled automatically):
 
-========================================
-MANAGE USERS / DATABASE  (TERMINAL - works on Windows AND Linux)
-========================================
-Database:   mongodb://localhost:27017/foodmine
+```bash
+cd loottafood
+npm install        # installs root + frontend + backend (uses --force for the frontend)
+```
 
-Open a terminal (Windows: Git Bash / PowerShell / CMD | Linux: Terminal):
+### Backend environment file
 
-1. Type:   mongosh
-2. Then:   use foodmine
-3. Then:   show collections
+Make sure `backend/src/.env` exists with:
 
-SEE ALL USERS:
-      db.users.find({}, { name: 1, email: 1, isAdmin: 1 })
-SEE FOODS / ORDERS:
-      db.foods.find()
-      db.orders.find()
-DELETE ONE USER:
-      db.users.deleteOne({ email: "their@email.com" })
-DELETE MANY USERS:
-      db.users.deleteMany({ email: { $in: ["a@gmail.com", "b@gmail.com"] } })
-MAKE ADMIN (then log out + log in):
-      db.users.updateOne({ email: "me@gmail.com" }, { $set: { isAdmin: true } })
-Type:   exit   to leave mongosh.
+```env
+MONGO_URI=mongodb://localhost:27017/foodmine
+JWT_SECRET=any-long-random-secret-string
+PORT=5000
+```
 
-If "mongosh" is not found:
-- Windows: install "MongoDB Shell" from mongodb.com/try/download/shell
-- Linux:   sudo apt-get install -y mongodb-mongosh
+> A template is provided at `backend/src/.env.example` — copy it to `.env` and
+> fill in your values. For a cloud database, paste your MongoDB Atlas string
+> instead (add `/foodmine` before the `?`).
 
-PASSWORDS are stored ENCRYPTED (bcrypt, one-way) - you cannot read the
-original. If someone forgets it, RESET it (set a new one):
-      http://localhost:5000/api/users/setPassword/EMAIL/NEWPASSWORD
-      example: http://localhost:5000/api/users/setPassword/john@gmail.com/newpass123
-      (or use Profile -> Change Password while logged in)
+---
 
-----------------------------------------
-(OPTIONAL) browser shortcuts - may not always work
-----------------------------------------
-See users:    http://localhost:5000/api/users/list
-Delete user:  http://localhost:5000/api/users/delete/THEIR@email.com
-Make admin:   http://localhost:5000/api/users/makeAdmin/THEIR@email.com
-If a browser link errors, use the mongosh terminal commands above instead.
+## 3. Run it (development)
 
-----------------------------------------
-NOTES
-----------------------------------------
-- A new computer starts EMPTY. You must seed once (steps 5 and 6).
-- After the first time, just run:  npm run dev   then open localhost:4200
-- Each computer has its OWN database (data is not shared between machines).
-- Re-load the menu to defaults:  http://localhost:5000/api/foods/seed?force=true
-- Re-create sample users (hashed):  http://localhost:5000/api/users/seed?force=true
+### Easiest — one command (runs BOTH servers)
 
-----------------------------------------
-(OPTIONAL) STOP / KILL THE SERVERS
-----------------------------------------
-Normal way: press Ctrl + C in the terminal, or close VS Code.
+From the **project root** (`loottafood`):
 
-If a port stays stuck ("port already in use"), free both ports.
-Easiest (Windows, Mac, Linux):
-      npx kill-port 4200 5000
-Windows:  taskkill /F /IM node.exe        (or Task Manager -> End Node.js)
-Linux:    pkill -f node                    (or System Monitor -> Kill node)
-Mac:      pkill -f node                    (or Activity Monitor -> Stop node)
+```bash
+npm install     # one time — installs root + frontend + backend
+npm run dev     # starts the backend AND the frontend together
+```
+
+`npm run dev` launches the backend (API on **:5000**) and the frontend (on **:4200**,
+bound to `0.0.0.0` so phones on your Wi‑Fi can reach it). Running only the frontend
+leaves the page empty — there's no backend to load the menu from.
+
+### Or run them separately (two terminals)
+
+```bash
+# Terminal A — backend API on http://localhost:5000
+cd backend
+npm start
+
+# Terminal B — frontend on http://localhost:4200
+cd frontend
+ng serve
+```
+
+Open **http://localhost:4200**.
+
+### Seed the data (first run)
+
+In your browser, visit these once:
+
+- `http://localhost:5000/api/users/seed`  → creates sample users
+- `http://localhost:5000/api/foods/seed`  → loads the menu items
+
+To force‑reload the menu after editing items in code:
+`http://localhost:5000/api/foods/seed?force=true`
+
+---
+
+## 4. Create / use an admin account
+
+**Option A – built‑in admin (easiest):**
+
+1. Run `…/api/users/seed` (above).
+2. Log in with **john@gmail.com** / **12345**.
+3. Click your name (top‑right) → **Dashboard**.
+
+**Option B – make your own account admin:**
+
+1. Register an account in the app (e.g. `you@gmail.com`).
+2. Visit `http://localhost:5000/api/users/makeAdmin/you@gmail.com`.
+3. **Log out and log back in** (admin status is stored in the login token).
+4. Click your name → **Dashboard**.
+
+> The `makeAdmin` route is a development helper — remove it before any real deployment.
+
+---
+
+## 5. What to test
+
+- **Menu & search** — browse, search, filter by category, **Sort** (price / top‑rated), **On sale only** toggle.
+- **Card hover/hold** — hover (desktop) or press‑hold (mobile) a card to reveal its description overlay.
+- **Food page** — favorite (♥), tap stars to rate, **You may also like** recommendations, Add to Cart.
+- **Dark mode** — 🌙 / ☀️ toggle in the header (remembered per browser).
+- **Order flow** — Cart → Checkout (name, address, map) → Payment (ABA / KHQR / Wing / WeChat / Alipay / ACLEDA) → Track.
+- **Orders page** — re‑order, delete (with undo), all with confirmations.
+- **Profile** — edit name/email and change password.
+- **Admin Dashboard** — add/edit/delete items, set **discount %**, **drag to reorder**, image **preview + upload**.
+
+> Favorites and your personal star ratings are stored in the browser (localStorage),
+> so they're per‑device for now.
+
+---
+
+## 6. Test on a phone / tablet (and hiding your IP)
+
+Everything runs through **one port (4200)** — the dev server proxies `/api` to the
+backend — so there are **no code edits or CORS changes** needed.
+
+### Same Wi‑Fi (LAN)
+
+1. `npm run dev` (the frontend is already exposed on `0.0.0.0`).
+2. Find your IP: `ipconfig` → IPv4 (e.g. `192.168.1.20`).
+3. On the phone (same Wi‑Fi), open `http://192.168.1.20:4200`.
+4. QR: point it at `http://192.168.1.20:4200`.
+
+### Hide your IP / share from anywhere — ngrok
+
+1. Install ngrok (https://ngrok.com), then run `npm run dev`.
+2. In a second terminal: `ngrok http 4200`.
+3. Copy the public URL it prints (e.g. `https://abc123.ngrok-free.app`).
+4. Open that URL on any device; for the table QR, encode **that** URL.
+
+Notes:
+
+- The free ngrok URL **changes every restart**, so regenerate the QR each session.
+- First‑time visitors see an ngrok "Visit Site" page (free tier).
+- For a permanent, branded link, deploy instead (section 7).
+
+### The table QR
+
+Make a QR that encodes the URL from above (LAN IP or the ngrok link) with any QR
+generator, print it, and place it on tables — customers scan → menu opens → they order.
+The header **📷 ScanMe** button can also display a QR image saved at
+`frontend/src/assets/scan-qr.jpg`.
+
+---
+
+## 7. Build for production
+
+```bash
+cd frontend
+ng build --configuration production    # outputs into backend/built/public
+```
+
+Then the backend serves the built app. For real public access (and "order from home"),
+deploy the backend + MongoDB to a host (e.g. Render / Railway / VPS) so the app has a
+public URL — then your table QR points to that domain.
+
+---
+
+## 8. Where to put images (future updates)
+
+Drop files in `frontend/src/assets/`:
+
+- `scan-qr.jpg` — the ScanMe order QR
+- `logo.png` — header logo (ask to wire it in)
+- `profile-default.png` — default profile avatar
+
+---
+
+## 9. Quick recommendations
+
+- For a class demo on one screen: just `localhost:4200` is fine.
+- For an in‑store demo with phones: use the Wi‑Fi/LAN steps in section 6.
+- For "order from anywhere": deploy it (section 7).
+- Keep uploaded images small; menu images uploaded via the admin form are stored in
+  the database as data — fine for a demo, but not for large catalogs.
+
+---
+
+## 10. Notifications (orders)
+
+A 🔔 bell appears in the header when logged in (polls every ~20s, no spinner):
+
+- **Admin** — the badge shows the number of **paid orders waiting** to be handled.
+  Open it → click a notification → goes to **Manage Orders** to mark them delivered.
+- **Customer** — the badge shows when an order has been **delivered/completed**.
+  Opening the bell clears the badge (the "seen" state is remembered per browser).
+
+Flow: customer pays → admin's bell shows a new request → admin marks delivered →
+customer's bell shows "Your order has been delivered".
+
+---
+
+## 11. Deleting customer data (users / orders)
+
+There is **no in‑app "delete user" screen** — user accounts and orders live in MongoDB,
+so you remove them from the database directly.
+
+**Option A — MongoDB Compass / Atlas (visual):**
+
+1. Open your database (the one in `MONGO_URI`).
+2. `users` collection → find the user (by `email`) → **delete document**.
+3. `orders` collection → delete that user's orders (filter by their `user` id).
+
+**Option B — mongosh (command line):**
+
+```js
+use foodmine
+
+// delete one user
+db.users.deleteOne({ email: "customer@example.com" })
+
+// delete that user's orders (use the _id you saw above)
+db.orders.deleteMany({ user: ObjectId("PASTE_USER_ID_HERE") })
+
+// or wipe ALL orders / ALL non-admin users (careful!)
+db.orders.deleteMany({})
+db.users.deleteMany({ isAdmin: false })
+```
+
+**Other resets:**
+
+- Reload the menu to defaults: visit `/api/foods/seed?force=true`.
+- A customer's **favorites & star ratings** are stored in the browser (localStorage),
+  not the database — clear them via the browser (DevTools → Application → Local Storage)
+  or by signing in on a fresh browser/profile.
+
+> Tip: never expose database credentials publicly, and remove the dev `makeAdmin`
+> route before deploying.
+
+---
+
+## API reference (quick)
+
+| Method | Route                                        | Purpose                          |
+| ------ | -------------------------------------------- | -------------------------------- |
+| GET    | `/api/users/seed`                            | Create sample users              |
+| POST   | `/api/users/login`                           | Log in                           |
+| POST   | `/api/users/register`                        | Register a new account           |
+| GET    | `/api/users/makeAdmin/:email`                | Grant admin (dev helper)         |
+| GET    | `/api/users/setPassword/:email/:newPassword` | Reset a password                 |
+| GET    | `/api/users/list`                            | List users                       |
+| GET    | `/api/users/delete/:email`                   | Delete a user                    |
+| PUT    | `/api/users/updateProfile`                   | Update profile                   |
+| PUT    | `/api/users/changePassword`                  | Change password                  |
+| GET    | `/api/foods/seed`                            | Load the menu                    |
